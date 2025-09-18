@@ -45,7 +45,7 @@ sol<T> AVL(BinTree<T> tree) {
 	{
 		solution.isEmpty = true;
 		solution.isAVL = true;
-		solution.h = 0;
+		solution.h = -1;
 		return solution;
 	}
 
@@ -72,7 +72,7 @@ sol<T> AVL(BinTree<T> tree) {
 		solution.min = tree.root();
 		solution.h++;
 
-		if (right.h > 1) {
+		if (right.h >= 1) {
 			solution.isAVL = false;
 			return solution;
 		}
@@ -82,7 +82,7 @@ sol<T> AVL(BinTree<T> tree) {
 		solution.max = tree.root();
 		solution.h++;
 
-		if (left.h > 1) {
+		if (left.h >= 1) {
 			solution.isAVL = false;
 			return solution;
 		}
