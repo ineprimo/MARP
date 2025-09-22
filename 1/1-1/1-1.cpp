@@ -29,206 +29,64 @@ using namespace std;
 
 template <typename T>
 struct sol {
-	bool isAVL;
-	bool isEmpty;
 	T min;
 	T max;
 	int h;
 };
 
 template<typename T>
-sol<T> AVL(BinTree<T> tree) {
+bool AVL(BinTree<T> tree, sol<T>& solution) {
 
-	sol<T> solution;
+	sol<T> solleft;
+	sol<T> solright;
 
-	if (tree.empty())
-	{
-		solution.isEmpty = true;
-		solution.isAVL = true;
-		solution.h = -1;
-		return solution;
-	}
+	if (tree.empty()) return true;
 
-	sol<T> left = AVL(tree.left());
-	if (!left.isAVL)
-		return left;
-	sol<T> right = AVL(tree.right());
-	if (!right.isAVL)
-		return right;
+	solleft.min = tree.root();
+	solleft.max = tree.root();
+	solleft.h = 0;
+	solright.min = tree.root();
+	solright.max = tree.root();
+	solright.h = 0;
 
-	if (left.isEmpty && right.isEmpty) {
-		solution.isEmpty = false;
-		solution.isAVL = true;
-		solution.min = tree.root();
-		solution.max = tree.root();
-		solution.h = 0;
-		return solution;
-	}
-
-
-	// altura
-	if (left.isEmpty) {
-		solution = right;
-		solution.min = tree.root();
+	// si no tiene hijos
+	if (tree.left().empty() && tree.right().empty()) {
 		solution.h++;
-
-		if (right.h >= 1) {
-			solution.isAVL = false;
-			return solution;
-		}
-	}
-	else if (right.isEmpty) {
-		solution = left;
-		solution.max = tree.root();
-		solution.h++;
-
-		if (left.h >= 1) {
-			solution.isAVL = false;
-			return solution;
-		}
-	}
-	else {
-		if (abs(right.h - left.h) > 1) {
-			solution.isAVL = false;
-			return solution;
-		}
-		else {
-			if (left.h > right.h)
-				solution.h = left.h;
-			else
-				solution.h = right.h;
-			solution.h++;
-		}
-
-		// orden
-
-		if (left.max < tree.root() && right.min > tree.root()) {
-			// si el mayor de la izquierda y el menor de la derecha mantienen el orden con la raiz,
-			// suponemos que si estan ordenados ya que suponemos que los arboles anteriores estan ordenados
-			solution.min = left.min;
-			solution.max = right.max;
-		}
-		else {
-			solution.isAVL = false;
-			return solution;
-		}
-	}
-	
-	solution.isAVL = true;
-	solution.isEmpty = false;
-
-	return solution;
-}
-
-// metodo auxiliar
-template<typename T>
-sol<T> isAVL(BinTree<T> tree) {
-	// compara soluciones
-	sol<T> solution;
-
-	// casos base
-	if (tree.empty()) {
-		solution.isEmpty = true;
-		solution.isAVL = true;
-		solution.h = 0;
-		return solution;
-	}
-	
-	// recursion
-	sol<T> left = isAVL<T>(tree.left());
-	sol<T> right = isAVL<T>(tree.right());
-
-	if (left.isEmpty && right.isEmpty) {
 		solution.min = tree.root();
 		solution.max = tree.root();
-		solution.h = 1;
-		solution.isEmpty = false;
-		return solution;
-	}
-	if (left.isEmpty) {
-		solution = right;
-		if (right.min < tree.root()) {
-			solution.min = right.min;
-			solution.isAVL = false;
-		}
-		else {
-			solution.min = tree.root();
-		}
-
-		if (right.h > 1)
-			solution.isAVL = false;
-		return solution;
-	}
-	if (right.isEmpty) {
-		solution = left;
-		if (left.max > tree.root()) {
-			solution.max = left.max;
-			solution.isAVL = false;
-		}
-		else
-			solution.max = tree.root();
-		if (left.h > 1)
-			solution.isAVL = false;
-		return solution;
-
+		return true;
 	}
 
+	bool left = AVL(tree.left(), solleft);
+	bool right = AVL(tree.right(), solright);
 
-	// is avl
-	if (left.isAVL && right.isAVL)
-		solution.isAVL = true;
-	else {
-		solution.isAVL = false;
-		return solution;
+	if (!left || !right) return false;
+
+	if (!tree.left().empty()) {
+		if (solleft.max >= tree.root()) 
+			return false;
+	}
+	if (!tree.right().empty()) {
+		if (solright.min <= tree.root()) 
+			return false;
 	}
 
-	// h
-	int diff = left.h - right.h;
-	if (abs(diff) >= 1) {
-		solution.isAVL = false;
-	}
+	// altura h
+	if (abs(solleft.h - solright.h) > 1) 
+		return false;
 
-	if (left.h > right.h)
-		solution.h = left.h;
-	else
-		solution.h = right.h;
+	// ajusta los min y max
+	solution.min = solleft.min;
+	solution.max = solright.max;
 
-	// se asegura del orden
-	if (!left.isEmpty && !right.isEmpty) {
-		if (left.min > right.min || left.max > right.min ||
-			right.min < left.max || right.max < right.max ||
-			left.max > tree.root() || right.min < tree.root()) {
-			solution.isAVL = false;
-		}
-
-		if (left.max > tree.root()) {
-			solution.isAVL = false;
-			solution.max = left.max;
-		}
-		else
-			solution.max = right.max;
-		if (right.min < tree.root()) {
-			solution.isAVL = false;
-			solution.max = left.max;
-		}
-		else
-			solution.min = left.min;
-
-
-		// lmao
-		// min
-
-		// max
-	}
-
-	solution.isEmpty = false;
-
+	if (solleft.h > solright.h) solution.h = solleft.h;
+	else solution.h = solright.h;
 	solution.h++;
 
-	// return maximo
-	return solution;
-}
 
+	return true;
+
+}
 
 bool resuelveCaso() {
 	// leer los datos de la entrada
@@ -239,18 +97,20 @@ bool resuelveCaso() {
 
 	if (type == "N") {
 		BinTree<int> tree = read_tree<int>(std::cin);
-		sol<int> solution = AVL<int>(tree);
+		sol<int> solution;
+		bool result = AVL<int>(tree, solution);
 
-		if (solution.isAVL)
+		if (result)
 			cout << "SI" << endl;
 		else
 			cout << "NO" << endl;
 	}
 	else if(type == "P") {
 		BinTree<string> tree = read_tree<string>(std::cin);
-		sol<string> solution = AVL<string>(tree);
+		sol<string> solution;
+		bool result = AVL<string>(tree, solution);
 
-		if (solution.isAVL)
+		if (result)
 			cout << "SI" << endl;
 		else
 			cout << "NO" << endl;
