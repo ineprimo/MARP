@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bintree.h" />
+    <ClInclude Include="TreeSet_AVL.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="casos.txt" />
