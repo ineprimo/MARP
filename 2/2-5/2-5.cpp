@@ -1,12 +1,14 @@
 
 /*@ <authors>
  *
- *  Ines Primo Lopez MARP52
+ * Ines Primo Lopez MARP52
  *
  *@ </authors> */
 
 #include <iostream>
 #include <fstream>
+#include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -26,40 +28,44 @@ using namespace std;
  // ================================================================
  //@ <answer>
 
-struct caja {
+
+struct comic {
 	int id;
-	int ocupada; // hasta cuando esta ocupada
+	int position;
+	int stack;
 };
 
-bool operator <(caja const& a, caja const& b) {
-	return a.ocupada < b.ocupada ||
-		(a.ocupada == b.ocupada && a.id < b.id);
+bool operator <(comic const& a, comic const& b) {
+	if (a.stack == b.stack)
+		return a.position < b.position;
+	else
+		return a.id > b.id;
 };
-
 
 bool resuelveCaso() {
 	// leer los datos de la entrada
-	int N, C;
-	cin >> N >> C;
-	if (N == 0)  // fin de la entrada
+	int n;
+	cin >> n;
+	if (!std::cin)  // fin de la entrada
 		return false;
+	int qpos = 0;
 
-	PriorityQueue<caja> cajas;
-	int seg;
-	for (int i = 0; i < N; i++) {
-		cajas.push({i + 1, 0});
-	}
-	
-	// settear las n cajas con tiempo 0 e índice i
-	int tiempo;
-	for (int i = 0; i < C; ++i) {
-		cin >> tiempo;
-		caja caj = cajas.top(); cajas.pop();
-		caj.ocupada += tiempo;
-		cajas.push(caj);
+	PriorityQueue<comic> queue;
+
+	int k, c;
+	for (int i = 0; i < n; ++i) {
+		cin >> k;
+		for (int j = 0; j < k; ++j) {
+			cin >> c;
+			queue.push({c, k - j, i});
+		}
 	}
 
-	cout << cajas.top().id << "\n";
+	cout << qpos << "\n";
+
+	// resolver el caso posiblemente llamando a otras funciones
+
+	// escribir la solución
 
 	return true;
 }

@@ -7,10 +7,12 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <queue>
 
 using namespace std;
 
-#include "PriorityQueue.h"  // propios o los de las estructuras de datos de clase
+//#include "..."  // propios o los de las estructuras de datos de clase
 
 /*@ <answer>
 
@@ -26,40 +28,54 @@ using namespace std;
  // ================================================================
  //@ <answer>
 
-struct caja {
-	int id;
-	int ocupada; // hasta cuando esta ocupada
+
+struct caso {
+	char type;
+	string name;
+	int gravedad;
+	int tiempo;
 };
 
-bool operator <(caja const& a, caja const& b) {
-	return a.ocupada < b.ocupada ||
-		(a.ocupada == b.ocupada && a.id < b.id);
+bool operator <(caso const& a, caso const& b) {
+	return b.gravedad < a.gravedad ||
+		(a.gravedad == b.gravedad && b.tiempo < a.tiempo);
 };
 
+bool operator >(caso const& a, caso const& b) {
+	return b.gravedad > a.gravedad ||
+		(a.gravedad == b.gravedad && b.tiempo < a.tiempo);
+};
 
 bool resuelveCaso() {
 	// leer los datos de la entrada
-	int N, C;
-	cin >> N >> C;
-	if (N == 0)  // fin de la entrada
+	int n;
+	cin >> n;
+	if (n == 0)  // fin de la entrada
 		return false;
 
-	PriorityQueue<caja> cajas;
-	int seg;
-	for (int i = 0; i < N; i++) {
-		cajas.push({i + 1, 0});
+	priority_queue<caso, vector<caso>, greater<caso>> queue;
+	for (int i = 0; i < n; i++) {
+		caso c;
+		caso sol;
+		cin >> c.type;
+		
+		if (c.type == 'A') {
+			sol = queue.top(); queue.pop();
+			cout << sol.name << "\n";
+		}
+		else {
+			cin >> c.name >> c.gravedad;
+			c.tiempo = i;
+			queue.push(c);
+		}
+		
 	}
-	
-	// settear las n cajas con tiempo 0 e índice i
-	int tiempo;
-	for (int i = 0; i < C; ++i) {
-		cin >> tiempo;
-		caja caj = cajas.top(); cajas.pop();
-		caj.ocupada += tiempo;
-		cajas.push(caj);
-	}
+	cout << "---\n";
 
-	cout << cajas.top().id << "\n";
+
+	// resolver el caso posiblemente llamando a otras funciones
+
+	// escribir la solución
 
 	return true;
 }
