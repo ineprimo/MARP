@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{46a496a6-fe2a-4ea4-934d-a26acb96a129}</ProjectGuid>
-    <RootNamespace>My25</RootNamespace>
+    <ProjectGuid>{72e8ee80-2891-45c6-98c3-5e0319684e99}</ProjectGuid>
+    <RootNamespace>My2L</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,10 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2-5.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="PriorityQueue.h" />
+    <ClCompile Include="2-L.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="casos.txt" />

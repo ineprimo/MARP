@@ -35,11 +35,16 @@ struct comic {
 	int stack;
 };
 
+//bool operator <(comic const& a, comic const& b) {
+//	if (a.stack == b.stack)
+//		return a.position < b.position;
+//	else
+//		return a.id > b.id;
+//};
+
 bool operator <(comic const& a, comic const& b) {
-	if (a.stack == b.stack)
-		return a.position < b.position;
-	else
-		return a.id > b.id;
+	return (a.stack == b.stack && a.position > b.position)
+		|| (a.stack != b.stack && a.id < b.id);
 };
 
 bool resuelveCaso() {
@@ -57,7 +62,7 @@ bool resuelveCaso() {
 		cin >> k;
 		for (int j = 0; j < k; ++j) {
 			cin >> c;
-			queue.push({c, k - j, i});
+			queue.push({c, j, i});
 		}
 	}
 
