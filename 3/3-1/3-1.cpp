@@ -27,10 +27,15 @@ using namespace std;
  // ================================================================
  //@ <answer>
 
-//bool operator <(int const& a, int const& b) {
-//	return (a.stack == b.stack && a.position > b.position)
-//		|| (a.stack != b.stack && a.id < b.id);
-//};
+struct Pajaro {
+	int id;
+	int age;
+};
+
+bool operator <(Pajaro const& a, Pajaro const& b) {
+	return a.age < b.age ||
+		(a.age == b.age && a.id < b.id);
+};
 
 bool resuelveCaso() {
 	// leer los datos de la entrada
@@ -40,24 +45,23 @@ bool resuelveCaso() {
 		return false;
 
 	// cola de prioridad de minimos
-	IndexPQ<int> queue((n*2)+1);
+	IndexPQ<Pajaro> queue((n*2)+1);
 
 	int pos = 0;
-	queue.push(pos++, pajaro);
+	queue.push(pos++, {pos, pajaro});
 
 	// resolver el caso posiblemente llamando a otras funciones
 	for (int i = 0; i < n; i++) {
 		int p1, p2;
 		cin >> p1 >> p2;
 
-		queue.push(pos++, p1);
-		queue.push(pos++, p2);
+		queue.push(pos++, {pos, p1});
+		queue.push(pos++, {pos, p2});
 
 		int index = (pos+1) / 2;
 
 		// solution
-		cout << queue.priority(index) << " ";
-
+		cout << queue.priority(index).age << " ";
 	}
 
 	cout << endl;
