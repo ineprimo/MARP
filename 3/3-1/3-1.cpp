@@ -37,6 +37,9 @@ bool operator <(Pajaro const& a, Pajaro const& b) {
 		(a.age == b.age && a.id < b.id);
 };
 
+
+// probar con dos colas de prioridad 
+
 bool resuelveCaso() {
 	// leer los datos de la entrada
 	int pajaro, n;
