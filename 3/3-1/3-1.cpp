@@ -12,6 +12,7 @@
 using namespace std;
 
 #include "IndexPQ.h"  // propios o los de las estructuras de datos de clase
+#include "PriorityQueue.h"  
 
 /*@ <answer>
 
@@ -32,12 +33,6 @@ struct Pajaro {
 	int age;
 };
 
-bool operator <(Pajaro const& a, Pajaro const& b) {
-	return a.age < b.age ||
-		(a.age == b.age && a.id < b.id);
-};
-
-
 // probar con dos colas de prioridad 
 
 bool resuelveCaso() {
@@ -47,24 +42,45 @@ bool resuelveCaso() {
 	if (pajaro == 0)  // fin de la entrada
 		return false;
 
-	// cola de prioridad de minimos
-	IndexPQ<Pajaro> queue((n*2)+1);
+	PriorityQueue<int, greater<int>> izquierda;
+	PriorityQueue<int, less<int>> derecha;
 
 	int pos = 0;
-	queue.push(pos++, {pos, pajaro});
+	//queue.push(pos++, {pos, pajaro});
+	izquierda.push(pajaro);
+
 
 	// resolver el caso posiblemente llamando a otras funciones
 	for (int i = 0; i < n; i++) {
 		int p1, p2;
 		cin >> p1 >> p2;
 
-		queue.push(pos++, {pos, p1});
-		queue.push(pos++, {pos, p2});
+		if (p1 < izquierda.top()) {
+			izquierda.push(p1);
+		}
+		else
+			derecha.push(p1);
 
-		int index = (pos+1) / 2;
+		if (p2 < izquierda.top()) {
+			izquierda.push(p2);
+		}
+		else
+			derecha.push(p2);
+
+		// si hay de mas en la cola de la izqueirda
+		if (izquierda.size() - derecha.size() > 1) {
+			int aux = izquierda.top(); izquierda.pop();
+			derecha.push(aux);
+		}
+
+		// Si hay de mas en la de la derecha
+		if (derecha.size() - izquierda.size() > 0) {
+			int aux = derecha.top(); derecha.pop();
+			izquierda.push(aux);
+		}
 
 		// solution
-		cout << queue.priority(index).age << " ";
+		cout << izquierda.top() << " ";
 	}
 
 	cout << endl;
