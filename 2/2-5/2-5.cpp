@@ -47,6 +47,8 @@ bool operator <(comic const& a, comic const& b) {
 		|| (a.stack != b.stack && a.id < b.id);
 };
 
+// 
+
 bool resuelveCaso() {
 	// leer los datos de la entrada
 	int n;
