@@ -27,57 +27,66 @@ using namespace std;
  // ================================================================
  //@ <answer>
 
-struct Pais {
-	string name;
-	int points;
+struct Tarea {
+	int init;
+	int fin;
+	int periodic;
 };
 
-bool operator>(const Pais& a, const Pais& b) {
+bool operator>(const Tarea& a, const Tarea& b) {
 
-	return a.points > b.points ||
-		(a.points == b.points && a.name < b.name);
+	return a.init > b.init;
 }
 
 bool resuelveCaso() {
 	// leer los datos de la entrada
-	int n;
-	cin >> n;
+	int n, m, t;
+	cin >> n >> m >> t;
 
 	if (!std::cin)  // fin de la entrada
 		return false;
 
-	IndexPQ<string, Pais, greater<Pais>> queue;
+	priority_queue<Tarea, vector<Tarea>, greater<Tarea>> queue;
+	int init, fin, per;
 
-	// resolver el caso posiblemente llamando a otras funciones
-
+	// tareas unicas
 	for (int i = 0; i < n; i++) {
-		string caso;
-		cin >> caso;
+		cin >> init >> fin;
 
-		if (caso == "?") {
-			cout << queue.top().prioridad.name << " " << queue.top().prioridad.points << "\n";
-		}
-		else {
-			int p;
-			cin >> p;
-
-			// try catch para probar si esta el dato y asi sumar los valores
-			try {
-				p += queue.priority(caso).points;
-			}
-			catch (domain_error& e) {
-				// se podria meter un push aqui pero el update ya hace el push
-			}
-
-			queue.update(caso, { caso, p });
-
-		}
+		if(init < t) 
+			queue.push({init, fin, 0});
 
 	}
-	cout << "---\n";
+	// tareas periodicas
+	for (int i = 0; i < m; i++) {
 
+		cin >> init >> fin >> per;
+
+		if(init < t)
+			queue.push({ init, fin, per });
+	}
+
+	// bucle para ver problemas
+	bool conflicto = false, ended = false;
+	while (!conflicto && !ended && queue.size() > 1 ) {
+
+		Tarea aux1 = queue.top(); queue.pop();
+		Tarea aux2 = queue.top();
+
+		if (aux2.init <= aux1.fin)
+			conflicto = true;
+
+		if (aux1.periodic > 0 && aux1.init + aux1.periodic < t)
+			queue.push({ aux1.init + aux1.periodic,
+						aux1.fin + aux1.periodic,
+						aux1.periodic });
+	}
 
 	// escribir la solución
+	if (conflicto)
+		cout << "SI\n";
+	else
+		cout << "NO\n";
 
 	return true;
 }
