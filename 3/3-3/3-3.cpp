@@ -11,7 +11,7 @@
 
 using namespace std;
 
-#include "IndexPQ.h"  // propios o los de las estructuras de datos de clase
+#include "PriorityQueue.h"  // propios o los de las estructuras de datos de clase
 
 /*@ <answer>
 
@@ -33,9 +33,9 @@ struct Tarea {
 	int periodic;
 };
 
-bool operator>(const Tarea& a, const Tarea& b) {
+bool operator<(const Tarea& a, const Tarea& b) {
 
-	return a.init > b.init;
+	return a.init < b.init;
 }
 
 bool resuelveCaso() {
@@ -46,7 +46,7 @@ bool resuelveCaso() {
 	if (!std::cin)  // fin de la entrada
 		return false;
 
-	priority_queue<Tarea, vector<Tarea>, greater<Tarea>> queue;
+	PriorityQueue<Tarea> queue;
 	int init, fin, per;
 
 	// tareas unicas
@@ -67,19 +67,22 @@ bool resuelveCaso() {
 	}
 
 	// bucle para ver problemas
-	bool conflicto = false, ended = false;
-	while (!conflicto && !ended && queue.size() > 1 ) {
+	bool conflicto = false;
+	while (!conflicto && queue.size() > 1) {
 
 		Tarea aux1 = queue.top(); queue.pop();
 		Tarea aux2 = queue.top();
 
-		if (aux2.init <= aux1.fin)
+		if (aux2.init < aux1.fin)
 			conflicto = true;
 
-		if (aux1.periodic > 0 && aux1.init + aux1.periodic < t)
+		if (aux1.periodic > 0 && aux1.init + aux1.periodic < t) {
+
 			queue.push({ aux1.init + aux1.periodic,
-						aux1.fin + aux1.periodic,
-						aux1.periodic });
+			aux1.fin + aux1.periodic,
+			aux1.periodic });
+		}
+
 	}
 
 	// escribir la solución
