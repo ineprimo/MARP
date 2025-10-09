@@ -45,8 +45,7 @@ private:
 		visit[v] = true;
 
 		auto a = g.ady(v);
-		int w = 0;
-		while(w<a.size() && !ciclico) {
+		for(int w : g.ady(v)){
 			if (!visit[w]) {
 				ant[w] = v;
 				dfs(g, w);
@@ -55,8 +54,6 @@ private:
 			else if (ant[v] != w && w != orig) {
 				ciclico = true;
 			}
-
-			w++;
 		}
 
 	}
@@ -84,9 +81,22 @@ public:
 		return cam;
 	}
 
-	bool esLibre() {
+	bool conexo(Grafo const& g) {
 
-		return !ciclico;
+		int i = 0;
+		while (i<visit.size()) {
+			if (visit[i] == false) 
+				return false;
+			i++;
+		}
+		return true;
+	}
+
+	bool esLibre(Grafo const& g) {
+
+		bool c = conexo(g);
+		
+		return c && !ciclico;
 	}
 
 
@@ -120,7 +130,7 @@ bool resuelveCaso() {
 	// escribir la solución
 	ArbolLibre al = ArbolLibre(graph, 0);
 
-	if (al.esLibre())
+	if (al.esLibre(graph))
 		cout << "SI\n";
 	else
 		cout << "NO\n";

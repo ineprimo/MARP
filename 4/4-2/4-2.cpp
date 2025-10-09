@@ -36,8 +36,9 @@ private:
 
 	vector<bool> visit;
 	vector<int> ant;
+	vector<bool> colores;
 	int orig;
-	bool ciclico = false;
+	bool bipartito = true;
 
 
 
@@ -45,18 +46,13 @@ private:
 		visit[v] = true;
 
 		auto a = g.ady(v);
-		int w = 0;
-		while (w < a.size() && !ciclico) {
+		for (int w : g.ady(v)) {
 			if (!visit[w]) {
 				ant[w] = v;
+				// cosas de colores
+
 				dfs(g, w);
 			}
-			// si no es su padre
-			else if (ant[v] != w && w != orig) {
-				ciclico = true;
-			}
-
-			w++;
 		}
 
 	}
@@ -84,9 +80,9 @@ public:
 		return cam;
 	}
 
-	bool esLibre() {
+	bool esBipartito() {
 
-		return !ciclico;
+		return bipartito;
 	}
 
 
@@ -120,7 +116,7 @@ bool resuelveCaso() {
 	// escribir la solución
 	Bipartito b = Bipartito(graph, 0);
 
-	if (b.esLibre())
+	if (b.esBipartito())
 		cout << "SI\n";
 	else
 		cout << "NO\n";
