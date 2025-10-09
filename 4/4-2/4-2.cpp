@@ -30,7 +30,7 @@ using namespace std;
 
 
 
-class ArbolLibre {
+class Bipartito {
 private:
 	using Camino = deque<int>;
 
@@ -46,7 +46,7 @@ private:
 
 		auto a = g.ady(v);
 		int w = 0;
-		while(w<a.size() && !ciclico) {
+		while (w < a.size() && !ciclico) {
 			if (!visit[w]) {
 				ant[w] = v;
 				dfs(g, w);
@@ -63,7 +63,7 @@ private:
 
 public:
 
-	ArbolLibre(Grafo const& g, int orig)
+	Bipartito(Grafo const& g, int orig)
 		: visit(g.V(), false), ant(g.V()), orig(orig) {
 
 
@@ -78,7 +78,7 @@ public:
 	Camino camino(int v) const {
 		if (!hayCamino(v)) throw domain_error("No existe camino");
 		Camino cam;
-		for (int x = v; x != orig; x = ant[x]) 
+		for (int x = v; x != orig; x = ant[x])
 			cam.push_back(x);
 		cam.push_back(orig);
 		return cam;
@@ -118,9 +118,9 @@ bool resuelveCaso() {
 	}
 
 	// escribir la solución
-	ArbolLibre al = ArbolLibre(graph, 0);
+	Bipartito b = Bipartito(graph, 0);
 
-	if (al.esLibre())
+	if (b.esLibre())
 		cout << "SI\n";
 	else
 		cout << "NO\n";
