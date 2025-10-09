@@ -1,4 +1,3 @@
-
 /*@ <authors>
  *
  * Ines Primo Lopez MARP52
@@ -7,7 +6,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <utility>
 #include <queue>
 
 using namespace std;
@@ -28,18 +26,16 @@ using namespace std;
  // ================================================================
  //@ <answer>
 
+// clase solucion
 
-
-class Bipartito {
+class GrupoDeAmigos {
 private:
 	using Camino = deque<int>;
 
 	vector<bool> visit;
 	vector<int> ant;
-	vector<bool> colores;
 	int orig;
-	bool bipartito = true;
-
+	int mayorGrupo;
 
 
 	void dfs(Grafo const& g, int v) {
@@ -48,8 +44,7 @@ private:
 		for (int w : g.ady(v)) {
 			if (!visit[w]) {
 				ant[w] = v;
-				// cosas de colores
-				colores[w] = !colores[v];
+
 				dfs(g, w);
 			}
 			else if (colores[w] == colores[v]) {
@@ -60,10 +55,11 @@ private:
 
 public:
 
-	Bipartito(Grafo const& g, int orig)
-		: visit(g.V(), false), ant(g.V()), orig(orig), colores(g.V(), false){
+	GrupoDeAmigos(Grafo const& g, int orig)
+		: visit(g.V(), false), ant(g.V()), orig(orig), colores(g.V(), false) {
 
 
+		// buscar el bosque mas grande
 		dfs(g, orig);
 
 	}
@@ -93,48 +89,49 @@ public:
 		return true;
 	}
 
-	bool esBipartito(Grafo const& g) {
-
-		return conexo(g) && bipartito;
+	int grupoMasGrande() int {
+		return 0;
 	}
-
 
 };
 
 
-bool resuelveCaso() {
+
+void resuelveCaso() {
 	// leer los datos de la entrada
-
-	int v, a, aux1, aux2;
-	cin >> v;
-	cin >> a;
-
-	if (!std::cin)  // fin de la entrada
-		return false;
-
-	// grafo
-	Grafo graph = Grafo(v);
-
-	vector<pair<int, int>> visitados;
-
-	bool esLibre = true;
-
+	int n;
+	cin >> n;
 	// resolver el caso posiblemente llamando a otras funciones
-	for (int i = 0; i < a; i++) {
-		cin >> aux1 >> aux2;
 
-		graph.ponArista(aux1, aux2);
+	for (int i = 0; i < n; i++) {
+		int v, a, aux1, aux2;
+		cin >> v, a;
+
+		// grafo
+		Grafo graph = Grafo(v);
+
+		vector<pair<int, int>> visitados;
+
+		bool esLibre = true;
+
+		// resolver el caso posiblemente llamando a otras funciones
+		for (int i = 0; i < a; i++) {
+			cin >> aux1 >> aux2;
+
+			graph.ponArista(aux1, aux2);
+		}
+
+		// escribir la solución
+		GrupoDeAmigos b = GrupoDeAmigos(graph, 0);
+
+		if (b.esBipartito(graph))
+			cout << "SI\n";
+		else
+			cout << "NO\n";
+		// escribir la solución
 	}
 
-	// escribir la solución
-	Bipartito b = Bipartito(graph, 0);
-
-	if (b.esBipartito(graph))
-		cout << "SI\n";
-	else
-		cout << "NO\n";
-
-	return true;
+	
 }
 
 //@ </answer>
@@ -149,13 +146,17 @@ int main() {
 	auto cinbuf = std::cin.rdbuf(in.rdbuf());
 #endif
 
-	while (resuelveCaso());
+	int numCasos;
+	std::cin >> numCasos;
+	for (int i = 0; i < numCasos; ++i)
+		resuelveCaso();
 
-	// para dejar todo como estaba al principio
+	// para dejar todo como estaba al principio y parar antes de salir
 #ifndef DOMJUDGE
 	std::cin.rdbuf(cinbuf);
 	std::cout << "Pulsa Intro para salir..." << std::flush;
 	std::cin.get();
 #endif
+
 	return 0;
 }

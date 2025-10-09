@@ -1,6 +1,6 @@
 /*@ <authors>
  *
- * Nombre, apellidos y usuario del juez (TAISXXX) de los autores de la solución.
+ * Ines Primo Lopez MARP52
  *
  *@ </authors> */
 
