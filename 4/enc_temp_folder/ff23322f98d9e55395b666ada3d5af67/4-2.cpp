@@ -47,7 +47,7 @@ private:
 
 		for (int w : g.ady(v)) {
 			if (!visit[w]) {
-				ant[w] = v; 
+				ant[w] = v;
 				// cosas de colores
 				colores[w] = !colores[v];
 				dfs(g, w);
