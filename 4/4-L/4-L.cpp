@@ -50,15 +50,29 @@ public:
 
 		// aqui va la fiesta
 
-
 		// busqueda de caminos desde alex (origen aleatorio)
+		bfs(g, pan);
+
+		// camino para lucas
+		Camino c = camino(pan, lucas);
+
+		// camino para alex
+		Camino t = camino(pan, alex);
+
+		// calculo del trabajo si no quedan
+		int trabajoPorSeparado = c.size() + t.size() - 2;
+
 		bfs(g, alex);
 
-
-		Camino c = camino(alex, lucas);
-
+		// calculo del trabajo si quedan
+		//Camino a = camino(alex, inter);
+		//Camino l = camino(inter, lucas);
 
 		c;
+		t;
+
+
+		// calculo de trabajo
 	}
 
 	// busqueda en profundiad
