@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{ff59b726-1bf6-4e25-a8b4-dd45092406b1}</ProjectGuid>
-    <RootNamespace>My41</RootNamespace>
+    <ProjectGuid>{6f705e9a-4dcf-4155-8fee-6e424e8077c8}</ProjectGuid>
+    <RootNamespace>My4L</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>4</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -128,7 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="4-1.cpp" />
+    <ClCompile Include="4-L.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="casos.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Grafo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
