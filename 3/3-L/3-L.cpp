@@ -9,15 +9,14 @@
 #include <algorithm>
 #include <limits>
 #include <queue>
+#include <unordered_map>
 using namespace std;
 
 #include "IndexPQ.h"
 
 /*@ <answer>
 
- Sustituye este párrafo por un comentario general sobre la solución,
- explicando cómo se resuelve el problema y cuál es el coste de la solución,
- en función del tamaño del problema.
+esoty probando la solucion del profe porque la mia no va :(
 
  @ </answer> */
 
@@ -27,32 +26,6 @@ using namespace std;
  //@ <answer>
 
 
-struct Canal {
-
-    int id;
-    int viewers;
-    int prime_mins;
-};
-
-bool operator>(const Canal& a, const Canal& b) {
-    return a.viewers > b.viewers ||
-        (a.viewers == b.viewers && a.id < b.id);
-}
-
-
-struct PrimeTime {
-
-    int id;
-    int viewers;
-    int prime_mins;
-};
-
-bool operator>(const PrimeTime& a, const PrimeTime& b) {
-    return a.prime_mins > b.prime_mins ||
-        (a.prime_mins == b.prime_mins && a.id < b.id);
-}
-
-
 
 bool resuelveCaso() {
 
@@ -60,106 +33,46 @@ bool resuelveCaso() {
     int D, C, N;
     cin >> D >> C >> N;
     if (!cin) return false;
-
-
     //
-    IndexPQ<int, Canal, greater<Canal>> queue;
-    for (int i = 0; i < C; i++) {
-        int viewers;
-        cin >> viewers;
-        Canal c = Canal({i+1, viewers, 0});
-
-        queue.push(i+1, c);
+    IndexPQ<int, greater<int>> viewers(C);
+    for (int i = 0; i < C; ++i) {
+        int v;
+        cin >> v;
+        viewers.update(i, v);
     }
-
-
-
-    // leer el resto del caso y resolverlo
-    int cont_mins = 0, mins, canal_id, viewers_canal, past_mins = 0;
-    
-
-    // primer caso
-    cin >> mins;
-    // actualiza el primetime
-    Canal c = queue.top().prioridad;
-
-    c.prime_mins += mins - past_mins;
-
-    queue.update(c.id, c);
-    past_mins = mins;
-
-   
-    int i = 0;
-
-    while (i <N) {
-
-        cin >> canal_id >> viewers_canal;
-
-        while (canal_id > -1) {
-
-            // magia de queues
-
-            // actualiza los viewers
-            Canal aux = Canal({ canal_id, viewers_canal,  queue.priority(canal_id).prime_mins });
-
-            queue.update(canal_id, aux);
-
-
-            cin >> canal_id;
-               
-            if(canal_id != -1)
-                cin >> viewers_canal;
+    unordered_map<int, int> minutos;
+    int anterior = 0;
+    for (int i = 0; i < N; ++i) {
+        int tiempo;
+        cin >> tiempo;
+        minutos[viewers.top().elem] += tiempo - anterior;
+        int canal;
+        cin >> canal;
+        while (canal != -1) {
+            int espectador;
+            cin >> espectador;
+            viewers.update(canal - 1, espectador);
+            cin >> canal;
         }
-
-        // actualiza el primetime
-        Canal c = queue.top().prioridad;
-
-        past_mins = mins;
-        cin >> mins;
-
-        c.prime_mins += mins - past_mins;
-
-        queue.update(c.id, c);
-
-        i++;
+        anterior = tiempo;
     }
-    
-    // ultimo caso
-    c = queue.top().prioridad;
+    minutos[viewers.top().elem] += D - anterior;
 
-
-    c.prime_mins += D - past_mins;
-
-    queue.update(c.id, c);
-
-
-    // escritura
-     //
-    IndexPQ<int, PrimeTime, greater<PrimeTime>> pt_queue;
-    i = 0;
-    while (i < queue.size()) {
-
-        c = queue.top().prioridad; queue.pop();
-
-        if (c.prime_mins > 0) {
-
-            PrimeTime pt = { c.id, c.viewers, c.prime_mins };
-            pt_queue.push(i, pt);
-
-            i++;
-        }
+    // resultado
+    vector<pair<int, int>> sol;
+    for (auto p : minutos) {
+        sol.push_back({p.first, p.second});
     }
+    // sort con expresion lambda
+    sort(sol.begin(), sol.end(),
+        [](pair<int, int> a, pair<int, int> b) {
+            return a.second > b.second || (a.second == b.second && a.first < b.first);
+        });
 
-    int size = pt_queue.size();
-    for (int i = 0; i < size; i++) {
-        PrimeTime pt = pt_queue.top().prioridad; pt_queue.pop();
-
-        cout << pt.id << " " << pt.prime_mins << '\n';
+    for (int i = 0; i < sol.size(); ++i) {
+        cout << sol[i].first + 1 << " " << sol[i].second << "\n";
     }
-
     cout << "---\n";
-
-
     return true;
 }
 
