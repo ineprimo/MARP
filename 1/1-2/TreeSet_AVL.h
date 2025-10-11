@@ -36,7 +36,7 @@ protected:
       Link iz, dr;
       int altura;
       TreeNode(T const& e, Link i = nullptr, Link d = nullptr,
-               int alt = 1) : elem(e), iz(i), dr(d), altura(alt) {}
+               int alt = 1) : elem(e), iz(i), dr(d), altura(alt), tam_i(1) {}
    };
 
    // puntero a la raíz de la estructura jerárquica de nodos
@@ -94,9 +94,24 @@ public:
 
    // SOLUTION
    T const& kesimo(int k) const {
+       // llamada al metodo recursivo
+       return kesimorec(k, raiz);
+   }
 
+   // SOLUTION
+   T const& kesimorec(int k, Link current) const {
+       // arbol vacio
+       if (size() < k) throw out_of_range("k esta fuera de rango");
 
+       // si k es tam_i es que estamos en el nodo que queremos
+       if (current->tam_i == k) return current->elem;
 
+       // si es mayor k, se llama a kesimo con su izquierdo
+       if (current->tam_i > k)
+           return kesimorec(k, current->iz);
+       // si es menor esta en la rama derecha asi que le restamos el tam_i del nodo actual a k
+       else
+           return kesimorec(k - current->tam_i, current->dr);
    }
 
 protected:
@@ -143,7 +158,11 @@ protected:
          crece = true;
       } else if (menor(e, a->elem)) {
          crece = inserta(e, a->iz);
-         if (crece) reequilibraDer(a);
+         if (crece) {
+             // al insertar un elemento se suma a la raiz el tam_i
+             a->tam_i++;
+             reequilibraDer(a);
+         }
       } else if (menor(a->elem, e)) {
          crece = inserta(e, a->dr);
          if (crece) reequilibraIzq(a);
@@ -159,6 +178,8 @@ protected:
 
    void rotaDer(Link & r2) {
       Link r1 = r2->iz;
+      // le quitamos el tam_i de su hijo izquierdo porque este deja de ser su hijo
+      r2->tam_i -= r1->tam_i;
       r2->iz = r1->dr;
       r1->dr = r2;
       r2->altura = std::max(altura(r2->iz), altura(r2->dr)) + 1;
@@ -168,6 +189,8 @@ protected:
 
    void rotaIzq(Link & r1) {
       Link r2 = r1->dr;
+      // le sumamos el tam_i de su hijo izquierdo porque este se convierte en su hijo
+      r2->tam_i += r1->tam_i;
       r1->dr = r2->iz;
       r2->iz = r1;
       r1->altura = std::max(altura(r1->iz), altura(r1->dr)) + 1;
