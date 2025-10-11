@@ -47,9 +47,6 @@ private:
 
 				dfs(g, w);
 			}
-			else if (colores[w] == colores[v]) {
-				bipartito = false;
-			}
 		}
 	}
 
