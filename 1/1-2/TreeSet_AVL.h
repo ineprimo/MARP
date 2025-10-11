@@ -98,23 +98,25 @@ public:
        return kesimorec(k, raiz);
    }
 
-   // SOLUTION
-   T const& kesimorec(int k, Link current) const {
-       // arbol vacio
-       if (size() < k) throw out_of_range("k esta fuera de rango");
 
-       // si k es tam_i es que estamos en el nodo que queremos
-       if (current->tam_i == k) return current->elem;
-
-       // si es mayor k, se llama a kesimo con su izquierdo
-       if (current->tam_i > k)
-           return kesimorec(k, current->iz);
-       // si es menor esta en la rama derecha asi que le restamos el tam_i del nodo actual a k
-       else
-           return kesimorec(k - current->tam_i, current->dr);
-   }
 
 protected:
+
+    // SOLUTION
+    T const& kesimorec(int k, Link current) const {
+        // arbol vacio
+        if (size() < k) throw out_of_range("k esta fuera de rango");
+
+        // si k es tam_i es que estamos en el nodo que queremos
+        if (current->tam_i == k) return current->elem;
+
+        // si es mayor k, se llama a kesimo con su izquierdo
+        if (current->tam_i > k)
+            return kesimorec(k, current->iz);
+        // si es menor esta en la rama derecha asi que le restamos el tam_i del nodo actual a k
+        else
+            return kesimorec(k - current->tam_i, current->dr);
+    }
 
    void copia(Set const& other) {
       raiz = copia(other.raiz);
