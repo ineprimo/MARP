@@ -29,106 +29,55 @@ using namespace std;
 // clase solucion
 
 class GrupoDeAmigos {
+
 private:
-	using Camino = deque<int>;
-
 	vector<bool> visit;
-	vector<int> ant;
-	int orig;
-	int mayorGrupo;
+	int maxim;
 
-
-	void dfs(Grafo const& g, int v) {
+	int dfs(Grafo const& g, int v) {
 		visit[v] = true;
-
+		int tam = 1;
 		for (int w : g.ady(v)) {
 			if (!visit[w]) {
-				ant[w] = v;
-
-				dfs(g, w);
+				tam += dfs(g, w);
 			}
 		}
+		return tam;
 	}
 
 public:
-
-	GrupoDeAmigos(Grafo const& g, int orig)
-		: visit(g.V(), false), ant(g.V()), orig(orig), colores(g.V(), false) {
-
-
-		// buscar el bosque mas grande
-		dfs(g, orig);
-
-	}
-
-	bool hayCamino(int v) const {
-		return visit[v];
-	}
-
-	Camino camino(int v) const {
-		if (!hayCamino(v)) throw domain_error("No existe camino");
-		Camino cam;
-		for (int x = v; x != orig; x = ant[x])
-			cam.push_back(x);
-		cam.push_back(orig);
-		return cam;
-	}
-
-
-	bool conexo(Grafo const& g) {
-
-		int i = 0;
-		while (i < visit.size()) {
-			if (visit[i] == false)
-				return false;
-			i++;
+	GrupoDeAmigos(Grafo const& g) : visit(g.V(), false), maxim(0) {
+		for (int v = 0; v < g.V(); ++v ) {
+			if (!visit[v]) {
+				int tam = dfs(g, v);
+				maxim = max(maxim, tam);
+			}
 		}
-		return true;
-	}
+	};
 
-	int grupoMasGrande() int {
-		return 0;
+	int maximo() {
+		return maxim;
 	}
-
 };
-
 
 
 void resuelveCaso() {
 	// leer los datos de la entrada
-	int n;
-	cin >> n;
 	// resolver el caso posiblemente llamando a otras funciones
 
-	for (int i = 0; i < n; i++) {
-		int v, a, aux1, aux2;
-		cin >> v, a;
+	int V, A;
+	cin >> V >> A;
 
-		// grafo
-		Grafo graph = Grafo(v);
+	Grafo amigos(V);
 
-		vector<pair<int, int>> visitados;
-
-		bool esLibre = true;
-
-		// resolver el caso posiblemente llamando a otras funciones
-		for (int i = 0; i < a; i++) {
-			cin >> aux1 >> aux2;
-
-			graph.ponArista(aux1, aux2);
-		}
-
-		// escribir la solución
-		GrupoDeAmigos b = GrupoDeAmigos(graph, 0);
-
-		if (b.esBipartito(graph))
-			cout << "SI\n";
-		else
-			cout << "NO\n";
-		// escribir la solución
+	int v, w;
+	for (int i = 0; i < A; i++) {
+		cin >> v >> w;
+		amigos.ponArista(v - 1, w - 1);
 	}
 
-	
+	GrupoDeAmigos grupo(amigos);
+	cout << grupo.maximo() << "\n";
 }
 
 //@ </answer>
