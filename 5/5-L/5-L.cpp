@@ -31,7 +31,7 @@ class ProgramaOscuro {
 
 public:
 
-	ProgramaOscuro(Digrafo& const g, vector<char> &const type) : visit(g.V(), false), ant(g.V()), apilado(g.V(), false), types(type) {
+	ProgramaOscuro(Digrafo& const g, vector<char> &const type) : visit(g.V(), false), ant(g.V()), apilado(g.V(), false), hayCiclo(false), types(type) {
 		for (int v = 0; v < g.V(); ++v) {
 
 			// si no se ha visitado y aun no se sabe si es siempre o a veces finalizable
@@ -69,14 +69,19 @@ private:
 		visit[v] = true;
 		for (int w : g.ady(v)) {
 			// !!! tener en cuenta tmb los casos donde se haya encontrado si finalizable
-			if (!hayCiclo)
+			if (hayCiclo)
 				return;
 			// seguimos
 			if (!visit[w]) {
 				ant[w] = v;
 
 				// si el tipo del vertice es F es que es el final y se ha podido llegar al final del programa
-				if(types[v] == 'F')
+				if (types[v] == 'F' && cond_used) {
+					finalizable = A_VECES_FINAZLIABLE;
+				}
+				else if(types[v] == 'F')
+					finalizable = SIEMPRE_FINALIZABLE;
+
 
 
 				dfs(g, w);
@@ -86,8 +91,10 @@ private:
 			//							-> si es de tipo C sigue mirando pero por donde salga del bucle
 			else if (apilado[w]) {
 				// si es de tipo condicional no se tiene en cuenta porque tendra otra adycencia que posiblemente salga del ciclo
-				if (types[v] == 'C')
+				if (types[v] == 'C') {
+					cond_used = true;
 					continue;
+				}
 				// si la instruccion actual es de tipo SALTAR o ARITMETICA y su adyacencia es un ciclo, no es finalizable
 				hayCiclo = true;
 				for (int x = v; x != w;x = ant[x]) {
