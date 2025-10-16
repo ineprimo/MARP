@@ -1,16 +1,15 @@
 
 /*@ <authors>
  *
- * Nombre, apellidos y usuario del juez (TAISXXX) de los autores de la solución.
+ * Ines Primo MARP52
  *
  *@ </authors> */
 
 #include <iostream>
 #include <fstream>
-#include <...>
 using namespace std;
 
-#include "..."  // propios o los de las estructuras de datos de clase
+#include "TreeSet_AVL.h"  // propios o los de las estructuras de datos de clase
 
 /*@ <answer>
 
@@ -26,8 +25,6 @@ using namespace std;
  // ================================================================
  //@ <answer>
 
-
-
 bool resuelveCaso() {
 	// leer los datos de la entrada
 	int n;
@@ -35,8 +32,24 @@ bool resuelveCaso() {
 	if (n == 0)
 		return false;
 
+	int aux;
+	Set<int> s;
+	for (int i = 0; i < n; i++) {
+		cin >> aux;
+		s.insert(aux);
+	}
 
+	cin >> n;
 	// resolver el caso posiblemente llamando a otras funciones
+	for (int i = 0; i < n; i++) {
+		cin >> aux;
+		try { cout << s.kesimo(aux) << "\n"; }
+		catch (out_of_range) { cout << "??\n"; }
+	}
+	cout << "---\n";
+
+
+
 
 	// escribir la solución
 
