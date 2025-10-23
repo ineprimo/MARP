@@ -15,9 +15,11 @@ using namespace std;
 
 /*@ <answer>
 
- Escribe aquí un comentario general sobre la solución, explicando cómo
- se resuelve el problema y cuál es el coste de la solución, en función
- del tamaño del problema.
+El coste del problema es O(N + M*ln**N), siendo N el numero de elementos del mapa (F*C), y M el numero de llamadas a unir y buscar:
+	llamadas a buscar = numero de manchas
+	llamadas a unir = numero de manchas * size de la mancha
+
+	M = manchas + (manchas*size(mancha))
 
  @ </answer> */
 
@@ -114,18 +116,19 @@ public:
 	}
 
 	void update(int i, int j) {
+		// se le añade la mancha
 		mapa[i][j] = '#';
 
-		// se le añade la mancha y se hace la union si lo requiere
+		// mira todas las direcciones 
 		for (pair<int, int> dir : directions) {
 
 			int posi = i + dir.first;
 			int posj = j + dir.second;
 
-			//chequea en la direccion si hay una mancha (primero se guarda la fila y luego la columna)
+			//chequea en la direccion si hay una mancha
 			if (inside(posi, posj) && mapa[posi][posj] == '#') {
-				// si hay mancha, la une:
 
+				// si hay mancha, la une:
 				int nueva = index(posi, posj);
 				int old = index(i, j);
 
@@ -134,7 +137,7 @@ public:
 		}
 
 
-		// mira el tamaño
+		// mira el size
 		int size = manchas.cardinal(manchas.buscar(index(i, j)));
 		if (size > biggest) biggest = size;
 	};
@@ -159,9 +162,7 @@ bool resuelveCaso() {
 
 	//
 	Manchas m = Manchas(mapa, F, C);
-
 	cout << m.getBiggest() << " ";
-
 
 	int casos, x, y;
 	cin >> casos;
@@ -170,7 +171,7 @@ bool resuelveCaso() {
 	for (int i = 0; i < casos; i++) {
 		cin >> x >> y;
 
-		m.update(x, y);
+		m.update(x - 1, y - 1);
 
 		// escribir la solución
 		cout << m.getBiggest() << " ";
