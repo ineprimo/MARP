@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{79eda373-7e87-4ca2-93e8-49d49125758a}</ProjectGuid>
-    <RootNamespace>My71</RootNamespace>
+    <ProjectGuid>{3b3f6757-2329-4d53-94fc-79e1b97c07a8}</ProjectGuid>
+    <RootNamespace>My72</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,7 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="7-1.cpp" />
+    <ClCompile Include="7-2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="casos.txt" />
