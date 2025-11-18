@@ -29,25 +29,31 @@ using namespace std;
  // ================================================================
  //@ <answer>
 
-
 template <typename Valor>
-class TiempoDeCarga {
+class CaminosMinimos {
 public:
-	TiempoDeCarga(DigrafoValorado<Valor> const& g, int orig, vector<int> _tiempos) : origen(orig),
-		dist(g.V(), INF), ulti(g.V()), pq(g.V()), tiempos(_tiempos) {
+	CaminosMinimos(DigrafoValorado<Valor> const& g, int orig) : origen(orig),
+		dist(g.V(), INF), ulti(g.V()), pq(g.V()), num(0), cost(g.V(), 0), count(g.V(), 0) {
 		dist[origen] = 0;
 		pq.push(origen, 0);
 		while (!pq.empty()) {
 			int v = pq.top().elem; pq.pop();
+			if (v == 4)
+				int a = 0;
+
 			for (auto a : g.ady(v))
 				relajar(a);
 		}
+
+		dist;
+		count;
 	}
 
 
 	using Camino = deque<AristaDirigida<Valor>>;
 
 	bool hayCamino(int v) const { return dist[v] != INF; }
+	int numCaminos(int v) const { return count[v]; }
 	Valor distancia(int v) const { return dist[v]; }
 	Camino camino(int v) const {
 		Camino cam;
@@ -59,30 +65,31 @@ public:
 		return cam;
 	}
 
-	int costeAPagina(int v) {
-		Camino cam = camino(v);
-		int coste = tiempos[origen];
-		while (!cam.empty()) {
-			AristaDirigida<int> a = cam.front(); cam.pop_front();
-			coste += a.valor();
-			coste += tiempos[a.hasta()];
-		}
-		return coste;
-	}
-
 private:
 	const Valor INF = std::numeric_limits<Valor>::max();
 	int origen;
 	std::vector<Valor> dist;
+	std::vector<int> cost;
+	std::vector<int> count;
 	std::vector<AristaDirigida<Valor>> ulti;
 	IndexPQ<Valor> pq;
 
-	vector<int> tiempos;
+	int num;
 	void relajar(AristaDirigida<Valor> a) {
 		int v = a.desde(), w = a.hasta();
-		if (dist[w] > dist[v] + a.valor() + tiempos[w]) {
-			dist[w] = dist[v] + a.valor() + tiempos[w]; ulti[w] = a;
+		if (dist[w] > dist[v] + a.valor()) {
+			dist[w] = dist[v] + a.valor(); ulti[w] = a;
+
+			if (count[v] == 0)
+				count[w] = 1;
+			else
+				count[w] = count[v];
+
+			// no tiene en cuenta que si encuentra otro camino (4 -> 7) despues del primero (4 -> 5 -> 7) pasa de count 2 a count 4
 			pq.update(w, dist[w]);
+		}
+		else if (dist[w] == dist[v] + a.valor()) {
+			count[w]++;
 		}
 	}
 };
@@ -90,39 +97,26 @@ private:
 
 bool resuelveCaso() {
 	// leer los datos de la entrada
-	int t;
-	cin >> t;
+	int V, A;
+	cin >> V >> A;
 
-	if (t == 0)
+	if (!std::cin)  // fin de la entrada
 		return false;
 
-	// tiempos de carga de las paginas
-	int tiempo = 0, aux;
-	vector<int> tiempos = vector<int>(tiempo);
-	for (int i = 0; i < t; i++) {
-		cin >> aux;
-		tiempos.push_back(aux);
+	DigrafoValorado<int> grafo(V);
+
+	int a, b, c;
+	// lectura del grafo
+	for (int i = 0; i < A; i++) {
+		cin >> a >> b >> c;
+		grafo.ponArista({a - 1, b - 1, c});
+		grafo.ponArista({b - 1, a - 1, c});
 	}
 
-	// conexiones de las paginas
-	int p = 0, a, b, j;
-	cin >> p;
-	DigrafoValorado<int> paginas = DigrafoValorado<int>(t);
-	for (int i = 0; i < p;i++) {
-		cin >> a >> b >> j;
-		paginas.ponArista({a-1, b-1, j});
+	//
+	CaminosMinimos<int> min = CaminosMinimos<int>(grafo, 0);
 
-	}
-
-	// resolver el caso posiblemente llamando a otras funciones
-	TiempoDeCarga<int> carga = TiempoDeCarga<int>(paginas, 0, tiempos);
-
-	//deque<AristaDirigida<int>> cam = carga.camino(t);
-
-	if(carga.hayCamino(t-1))
-		cout << carga.costeAPagina(t - 1) << "\n";
-	else
-		cout << "IMPOSIBLE\n";
+	cout << min.numCaminos(V-1) << "\n";
 
 	return true;
 }
