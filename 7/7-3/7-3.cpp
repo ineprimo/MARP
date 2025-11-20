@@ -33,13 +33,11 @@ template <typename Valor>
 class CaminosMinimos {
 public:
 	CaminosMinimos(DigrafoValorado<Valor> const& g, int orig) : origen(orig),
-		dist(g.V(), INF), ulti(g.V()), pq(g.V()), num(0), cost(g.V(), 0), count(g.V(), 0) {
+		dist(g.V(), INF), ulti(g.V()), pq(g.V()), num(0), count(g.V(), 0) {
 		dist[origen] = 0;
 		pq.push(origen, 0);
 		while (!pq.empty()) {
 			int v = pq.top().elem; pq.pop();
-			if (v == 4)
-				int a = 0;
 
 			for (auto a : g.ady(v))
 				relajar(a);
@@ -69,7 +67,6 @@ private:
 	const Valor INF = std::numeric_limits<Valor>::max();
 	int origen;
 	std::vector<Valor> dist;
-	std::vector<int> cost;
 	std::vector<int> count;
 	std::vector<AristaDirigida<Valor>> ulti;
 	IndexPQ<Valor> pq;
