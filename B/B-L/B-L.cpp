@@ -74,23 +74,22 @@ public:
 			// si ambas canciones son iguales
 			if (playlist1[i] == playlist2[j]) {
 
-				// llamda recursiva avanzando en ambas playlists
+				//
 				res = playlist(i + 1, j + 1);
-
-				// mete la cancion
 				res.push_back(playlist1[i]);
+				// mete la cancion
 				return res;
 			}
 			// si ambas canciones son distintas
 			else {
 				//
-				vector<string> a = playlist(i, j + 1);
-				vector<string> b = playlist(i + 1, j);
+				vector<string> a = playlist(i + 1, j);
+				vector<string> b = playlist(i, j + 1);
 				res = max_playlist(a, b);
 				return res;
 			}
 		}
-		return vector<string>(); 
+		return res; 
 	}
 
 	vector<string> getSol() {
