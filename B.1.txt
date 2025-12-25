@@ -1,0 +1,55 @@
+//// B.1
+
+oro(i, j) = máxima cantidad de oro que se puede recoger teniendo una botella que permite sumergirse j segundos cuando están disponibles los cofres del 1 al i
+
+
+oro(0, j) = 0
+oro(i, 0) = 0
+oro(i, j) = oro(i-1, j) 			si 3*p_i >j
+	  = max((oro(i-1, j),
+		 oro(i-1, j-3*p_i + c_i))
+
+usando el metodo ascendente, rellenamos una tabla de tamaño (N+1)(T+1) de arriba a abajo y de izquierda a derecha
+
+el coste esta en O(N*T) tanto en tiempo como en espacio adicional
+
+
+///// B.2
+
+a|_________|a
+i	    j
+
+a|__________|b		=> 	b|a__________|b  (se le añade por un lado o por otro)
+i	     j			+ i         j   
+
+
+F(i,j) => f(i+1, j-1)	si pal(i) = pal(j) 
+	  min( f(i+1, j),  f(i. j-1) + 1)
+
+f(i, j) = 0	si  i >= j (tenemos o una letra o ninguna)
+
+
+pal[0, N-1] -> llamada inicial -> f(0, N-1)
+
+
+!! recorrido en diagonal (todo debajo de la diagonal no vale porque es simetrico y no hace falta)
+!!!! método descendente recursivo
+!!!!!! LA SOLUCION SE CALCULA SIEMPRE AL FINAL PARA EVITAR LOS CASOS EN LOS QUE CONSTRUIR LA SOLUCION MIENTRAS SE RESUELVE EL PROBLEMA DE O(N^3) Y SE QUEDE LA COMPLEJIDAD EN O(N^2 + N) (N^2 por la recursión y N por la solucion)
+
+0				N-1
+_________________________________
+|0			      - *|	
+|  0			      - -|
+|    0				 |
+|      0			 |
+
+---------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
