@@ -27,46 +27,8 @@ using namespace std;
  // ================================================================
  //@ <answer>
 
-int manguera(vector<int> const& agujeros, int L, vector<bool>& g) {
-	g[0] = false; // empezamos sin parche
-	int parches = 0;
-	int p = 0;	// puntos recorridos desde el ultimo parche
-	int sigAgujero = 0;
-	int ultimoParche = 0;
-	bool parcheando = false;
-	for (int i = 0; i < agujeros[agujeros.size() - 1]; ++i) { // estamos en gi
-
-		// si el parche aun tapa
-		if (p < L && parcheando) {
-			// seguimos y marcamos que esta parcheado
-			g[i] = true; // 
-			p++; // aumentamos el contador de puntos del parche
-			while(i == agujeros[sigAgujero] - 1)
-				sigAgujero++;
-
-		}
-		// si hay agujero pero el parche no lo tapa
-		else if(i == agujeros[sigAgujero] - 1) {
-			// le ponemos un parche
-			g[i] = true;
-			++parches;
-			p = 0;
-			ultimoParche = i;
-			parcheando = true;
-
-			// marcamos el siguiente agujero
-			sigAgujero++;
-		}
-		else {
-			parcheando = false;
-			p = 0;
-		}
-	}
-	return parches;
-}
-
-int manguera2(vector<int> const& agujeros, int L, vector<bool>& g) {
-	int n = g.size();
+int manguera(vector<int> const& agujeros, int L) {
+	int n = agujeros[agujeros.size() - 1];
 	int agujero = 0;
 	int cont = 0;
 	int parche = - L - 1;
@@ -75,20 +37,15 @@ int manguera2(vector<int> const& agujeros, int L, vector<bool>& g) {
 		if (i == agujeros[agujero] - 1) {
 			// si no hay parche se lo pone
 			if (i - parche > L) {
-				g[i] = true;
 				parche = i;
 				cont++;
-			}
+				i += L;
 
-			// si tiene que haber parche se lo settea (si la diferencia entre i y parche es > 0) (esto creo que es irrelevante)
-			if (!g[i]) {
-				g[i] = true;
+				// actualiza los agujeros
+				while (agujero < agujeros.size() && (i == agujeros[agujero] - 1 || agujeros[agujero] - 1 < i))
+					agujero++;
 			}
-			// siguiente agujero
-			while (agujero < agujeros.size() && i == agujeros[agujero] - 1)
-				agujero++;
 		}
-
 	}
 	return cont;
 }
@@ -108,10 +65,9 @@ bool resuelveCaso() {
 		cin >> aux;
 		agujeros.push_back(aux);
 	}
-	vector<bool> filled(agujeros[agujeros.size()-1], false);
 
-	//
-	cout << manguera2(agujeros, L, filled) << "\n";
+	// solucion
+	cout << manguera(agujeros, L) << "\n";
 
 	return true;
 }
