@@ -61,12 +61,36 @@ int manguera(vector<int> const& agujeros, int L, vector<bool>& g) {
 			parcheando = false;
 			p = 0;
 		}
-
-
-
-
 	}
 	return parches;
+}
+
+int manguera2(vector<int> const& agujeros, int L, vector<bool>& g) {
+	int n = g.size();
+	int agujero = 0;
+	int cont = 0;
+	int parche = - L - 1;
+	for (int i = 0; i < n; i++) {
+		// si tiene un agujero
+		if (i == agujeros[agujero] - 1) {
+			// si no hay parche se lo pone
+			if (i - parche > L) {
+				g[i] = true;
+				parche = i;
+				cont++;
+			}
+
+			// si tiene que haber parche se lo settea (si la diferencia entre i y parche es > 0) (esto creo que es irrelevante)
+			if (!g[i]) {
+				g[i] = true;
+			}
+			// siguiente agujero
+			while (agujero < agujeros.size() && i == agujeros[agujero] - 1)
+				agujero++;
+		}
+
+	}
+	return cont;
 }
 
 bool resuelveCaso() {
@@ -87,7 +111,7 @@ bool resuelveCaso() {
 	vector<bool> filled(agujeros[agujeros.size()-1], false);
 
 	//
-	cout << manguera(agujeros, L, filled) << "\n";
+	cout << manguera2(agujeros, L, filled) << "\n";
 
 	return true;
 }
