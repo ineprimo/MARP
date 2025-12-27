@@ -37,9 +37,6 @@ struct solucion {
 	std::vector<int>cuerdas;
 	// costes
 	std::vector<int>costes;
-
-
-	int formas_cont = 0;
 };
 
 // metodo que resuelve el problema
