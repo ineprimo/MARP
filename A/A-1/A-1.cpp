@@ -1,4 +1,3 @@
-
 /*@ <authors>
  *
  * Ines Primo Lopez MARP52
@@ -11,6 +10,7 @@
 
 using namespace std;
 
+#include "Matriz.h"
 #include "EnterosInf.h"
 //#include "..."  // propios o los de las estructuras de datos de clase
 
@@ -39,29 +39,118 @@ struct solucion {
 	std::vector<int>costes;
 };
 
-// metodo que resuelve el problema
-void cometa(const std::vector<int>& longitudes, const std::vector<int>& costes, const int& longitud, solucion& sol) {
-	// bucle que recorre las cuerdas
-	for (int i = 0; i < longitudes.size(); i++) {
-		// recorremos la longitud total
-		for (int l = longitud; l >= longitudes[i]; l--) {
-			// estamos recorriendo todas las posibles longitudes (vamos de 1 en 1 hasta el maximo que queremos) 
-			// para poder luego dividir el problema en subproblemas, es decir, calculamos las soluciones para cuando 
-			// la longitud sea de 10 para cuando volvamos a pedir esa longitud ya la tengamos
-			
-			//Primero contamos el número de formas posibles
-			sol.formas[l] += sol.formas[l - longitudes[i]];
+class Cometa {
+public:
+	Cometa(std::vector<int> _longitudes, std::vector<int> _costes, int _longitud) {
+		longitudes = _longitudes;
+		costes = _costes;
+		longitud = _longitud;
 
-			// Contamos el mínimo de cuerdas necesarias
-			sol.cuerdas[l] = min(sol.cuerdas[l], sol.cuerdas[l - longitudes[i]] + 1);
+		tabla = Matriz<EntInf>(longitudes.size() + 1, longitud + 1, Infinito);
+		formasT = Matriz<EntInf>(longitudes.size() + 1, longitud + 1, Infinito);
 
-			//Contamos el mínimo coste necesario
-			sol.costes[l] = min(sol.costes[l], sol.costes[l - longitudes[i]] + costes[i]);
+		// 
+		cometa();
 
+		// para el numero de formas
+		cuerdaUsada = std::vector<bool>(longitudes.size(), false);
 
+		numFormas = formas(0,0,longitud);
+
+		std::vector<int> sol = getSolution();
+		for (int a : sol) {
+			cost += costes[a];
 		}
 	}
-}
+	
+	EntInf getNum() {
+		return tabla[longitudes.size()][longitud];
+	}
+
+	EntInf getNumFormas() {
+		return numFormas;
+	}
+
+	int getCoste() {
+		return cost;
+	}
+
+private:
+	std::vector<int> longitudes;
+	std::vector<int> costes;
+	int longitud;
+	Matriz<EntInf> tabla;
+	Matriz<EntInf> formasT;
+	EntInf numFormas = 0;
+	int cost = 0;
+	std::vector<bool> cuerdaUsada;
+
+
+	// calcula cuantas cuerdas hacen falta
+	void cometa() {
+		// bucle que recorre las cuerdas
+		for (int i = 1; i < tabla.numfils(); i++) {
+			// settea el conjunto vacio
+			tabla[i][0] = 0;
+
+			// recorremos la longitud total
+			for (int l = 1; l < tabla.numcols(); l++) {
+				
+				// si podemos usar esta cuerda la usamos
+				if (l < longitudes[i - 1]) {
+					tabla[i][l] = tabla[i - 1][l];
+				}
+				// si no podemos usar esta cuerda
+				else {
+					EntInf a = tabla[i - 1][l];
+					EntInf b = tabla[i][l - longitudes[i - 1]] + 1;
+
+					tabla[i][l] = min(a, b);
+				}
+			}
+		}
+	}
+
+	// i -> indice de cuerdas
+	// j -> indice de longitud
+	EntInf formas(int i, int j, int c) {
+		// si la cuerda ha sido usada o no nos quedan cuerdas devolvemos
+		if ((i > longitudes.size() && c <= 0) || cuerdaUsada[i]) return 0;
+		// si ya lo tenemos en la tabla 
+		else if (formasT[i][j] != -1) return formasT[i][j];
+		// si no esta calculado
+		else {
+			// hacemos un divide et impera
+			// calculamos hacia abajo
+			EntInf a = formas(i + 1, j, c - 1);
+			// calculamos hacia la derecha
+			EntInf b = formas(i, j + 1, c - 1);
+			// unimos solucion
+			formasT[i][j] = a + b;
+		}
+		// devolvemos la solucion
+		return formasT[i][j];
+	}
+
+	vector<int> getSolution() {
+		vector<int> sol;
+		if (tabla[longitudes.size()][longitud] != Infinito) {
+			int i = longitudes.size(), j = longitud;
+			while (j > 0) { // no se haya completado al cometa 
+				if (longitudes[i - 1] <= j && tabla[i][j] == tabla[i][j - longitudes[i - 1]] + 1) {
+					// tomamos una moneda de tipo i
+					sol.push_back(i - 1);
+					j = j - longitudes[i - 1];
+				}
+				else // no tomamos más monedas de tipo i
+					--i;
+			}
+		}
+		return sol;
+	}
+};
+
+
 
 bool resuelveCaso() {
 	// leer los datos de la entrada
@@ -94,19 +183,19 @@ bool resuelveCaso() {
 	sol.cuerdas[0] = 0;
 
 	// resolver el caso posiblemente llamando a otras funciones
-	cometa(longitudes, costes, L, sol);
-	
+	Cometa c(longitudes, costes, L);
+
 	// escribir la solución
-	if(sol.formas[L] == 0)
+	if(c.getNum() > longitudes.size())
 		std::cout << "NO" << std::endl;
 	else {
 		std::cout << "SI " 
 			// formas totales
-			<< sol.formas[L] << " "
+			<< c.getNumFormas() << " "
 			// minimo de cuerdas (solucion optima)
-			<< sol.cuerdas[L] << " "
+			<< c.getNum() << " "
 			// coste minimo (optimo)
-			<< sol.costes[L] << " "
+			<< c.getCoste() << " "
 			<< std::endl;
 	}
 
