@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -27,37 +28,49 @@ using namespace std;
  // ================================================================
  //@ <answer>
 
-int manguera(vector<int> const& agujeros, int L) {
+bool greaterThan(int i, int j) { return (i > j); }
+
+int guerreros(vector<int> const& enemigos, vector<int> const& aliados) {
 	int cont = 0;
-	int parche = 0;
-	for (int i = 0; i < agujeros.size(); i++) {
-		if (parche - agujeros[i] < 0) {
-			// pone un parche
-			parche = agujeros[i] + L;
+	int i = 0, j = 0;
+	while(i<enemigos.size() && j<aliados.size()){
+		// si es suficiente
+		if (enemigos[i] <= aliados[j]) {
 			cont++;
+			i++; j++;
 		}
+		else i++;
 	}
 	return cont;
 }
 
 bool resuelveCaso() {
 	// leer los datos de la entrada
-	int L, N;
+	int N;
 
-	cin >> N >> L;
+	cin >> N;
 
 	if (!std::cin)  // fin de la entrada
 		return false;
 
-	vector<int> agujeros;
+	vector<int> enemigos;
+	vector<int> aliados;
 	int aux;
 	for (int i = 0; i < N; i++) {
 		cin >> aux;
-		agujeros.push_back(aux);
+		enemigos.push_back(aux);
+	}
+	for (int i = 0; i < N; i++) {
+		cin >> aux;
+		aliados.push_back(aux);
 	}
 
+	// los ordenamos de mayor a menor
+	std::sort(enemigos.begin(), enemigos.end(), greaterThan);
+	std::sort(aliados.begin(), aliados.end(), greaterThan);
+
 	// solucion
-	cout << manguera(agujeros, L) << "\n";
+	cout << guerreros(enemigos, aliados) << "\n";
 
 	return true;
 }

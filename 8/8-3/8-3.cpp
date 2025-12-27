@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -27,37 +28,51 @@ using namespace std;
  // ================================================================
  //@ <answer>
 
-int manguera(vector<int> const& agujeros, int L) {
+bool greaterThan(int i, int j) { return (i > j); }
+
+int extra(vector<int> const& chavales, vector<int> const& equipamiento) {
 	int cont = 0;
-	int parche = 0;
-	for (int i = 0; i < agujeros.size(); i++) {
-		if (parche - agujeros[i] < 0) {
-			// pone un parche
-			parche = agujeros[i] + L;
-			cont++;
-		}
+	int i = 0, j = 0;
+	while (i < chavales.size() && j < equipamiento.size()) {
+		int talla = equipamiento[j];
+		int c = chavales[i];
+		// si el chaval puede llevar el equipamiento
+		if (chavales[i] == equipamiento[j] || chavales[i] + 1 == equipamiento[j]) {
+			i++; j++; }
+		else if (chavales[i] < equipamiento[j]) j++;
+		else { i++; cont++; }
 	}
+	cont += chavales.size() - i;
 	return cont;
 }
 
 bool resuelveCaso() {
 	// leer los datos de la entrada
-	int L, N;
+	int N, M;
 
-	cin >> N >> L;
+	cin >> N >> M;
 
 	if (!std::cin)  // fin de la entrada
 		return false;
 
-	vector<int> agujeros;
+	vector<int> chavales;
+	vector<int> equipacion;
 	int aux;
 	for (int i = 0; i < N; i++) {
 		cin >> aux;
-		agujeros.push_back(aux);
+		chavales.push_back(aux);
+	}
+	for (int i = 0; i <M; i++) {
+		cin >> aux;
+		equipacion.push_back(aux);
 	}
 
+	// los ordenamos de mayor a menor
+	std::sort(chavales.begin(), chavales.end(), greaterThan);
+	std::sort(equipacion.begin(), equipacion.end(), greaterThan);
+
 	// solucion
-	cout << manguera(agujeros, L) << "\n";
+	cout << extra(chavales, equipacion) << "\n";
 
 	return true;
 }
