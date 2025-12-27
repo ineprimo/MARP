@@ -15,13 +15,32 @@ using namespace std;
 
 /*@ <answer>
 
-Definicion recursiva, siendo i el indice del sector que estamos mirando y j la cantidad de puntos que quedan por conseguir:
+Definicion recursiva, siendo i el indice de la posicion en vertical (la y), j el indice de la posicion en horizontal (la x) y c el rango del 
+recorrido minimo estimado:
 
+						|								0									si i = N o j = M o c < 0 o m[i][j] = 'X'
+						|								1									si i = N - 1 y j = M - 1 y c = 0 
+caminoMinimo(i, j, c) =	|	caminoMinimo(i + 1, j, c - 1) + caminoMinimo(i, j + 1, c - 1)	si i < N - 1 y j < M - 1 y c > 0
 						|
-						|	si c < 0	0
-caminoMinimo(i, j, c) =	|	si 
-						|	
 
+Cuando los indices se salgan de los rangos del mapa o el camino que estemos formando sea mas grande de lo que necesitemos o encontremos una 
+casilla con obras ('X'), devolvemos 0 porque no hay caminos validos hasta esa casilla
+
+Cuando los indices lleguen a la ultima posicion del mapa (N - 1, M - 1) y el camino sea de la longitud estimada, devolvemos 1
+
+Cuando los indices sigan dentro de los rangos y el camino siga teniendo recorrido por hacer, hacemos dos llamadas recursivas, una que mire
+el camino de la izquierda y otra el de la derecha, y sumamos los caminos de ambas opciones
+
+Casos base:
+	cM(i, j, -1) = 0
+	cM(N, j, c) = 0
+	cM(i, M, c) = 0
+	cM(i, j, c) = 0, donde m[i][j] == 'X'
+	cM(N - 1, M - 1, 0) = 1
+
+Tabla y memoria:
+Al estar calculando costes en un mapa 2D, no es posible minimizar la tabla en memoria ya que perderiamos informacion. 
+Para calcular cM(i, j, c) hacen falta las casillas (i + 1, j, c - 1) y (i, j + 1, c - 1).
 
  @ </answer> */
 
@@ -58,7 +77,7 @@ private:
 		// caso base si se sale de bounds o si encuentra una X o si es demasiado largo
 		if (i >= N || j >= M || cruces[i][j] == 'X' || c < 0 ) return 0;
 		// caso base si ha llegado al final (suponiendo que no es mas largo que el camino minimo supuesto)
-		else if (i == N - 1 && j == M - 1) return 1;
+		else if (i == N - 1 && j == M - 1 && c == 0) return 1;
 		// si ya lo tenemos en la tabla
 		else if (tabla[i][j] != -1) return tabla[i][j];
 		// si no esta calculado
