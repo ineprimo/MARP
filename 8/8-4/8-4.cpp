@@ -47,44 +47,53 @@ struct pelicula {
 
 fecha getNextHour(vector<pelicula> peliculas, int i) {
 
-	int currHora = peliculas[i].f.hora, currMin = peliculas[i].f.min, currDia = peliculas[i].f.dia;
+	int currHora = peliculas[i].f.hora, 
+		currMin = peliculas[i].f.min, 
+		currDia = peliculas[i].f.dia;
 
-	int h = peliculas[i].duracion / 60;
-	int m = peliculas[i].duracion % 60;
+	int min = currMin + peliculas[i].duracion + 10;
 
-	int a = m + currMin;
-	h += a / 60;
-	currMin = a % 60;
+	int h = min / 60;
+	int m = min % 60;
+
+	currMin = m;
 	currHora += h;
 
+	// si pasa de dia
 	if (currHora > 24) {
-		h = currHora%24;
-		int dia = currHora / 24;
-		currDia += dia;
-		currHora = h;
+		currDia++;
+		currHora = currHora % 24;
 	}
 
 	return{ currDia, currHora, currMin };
 }
 
+bool earlierThan(const pelicula& a, const pelicula& b)
+{
+	return a.f.dia < b.f.dia
+		|| (a.f.dia == b.f.dia && a.f.hora < b.f.hora)
+		|| (a.f.dia == b.f.dia && a.f.hora == b.f.hora && a.f.min < b.f.min);
+}
+
 int maraton(vector<pelicula> peliculas) {
 	int cont = 1;
 	int i = 0;
-	int currHora = peliculas[0].f.hora, currMin = peliculas[0].f.min;
-	int currDia = peliculas[0].f.dia;
+
+	fecha currFecha;
 	fecha next = getNextHour(peliculas, i);
-	currDia = next.dia; 
-	currHora = next.hora; 
-	currMin = next.min;
+	currFecha.dia = next.dia; 
+	currFecha.hora = next.hora; 
+	currFecha.min = next.min;
+	i++;
 
 	while (i < peliculas.size()) {
-		if (currDia < peliculas[i].f.dia 
-			|| (currDia == peliculas[i].f.dia && currHora < peliculas[i].f.hora) 
-			|| (currDia == peliculas[i].f.dia && currHora == peliculas[i].f.hora && currMin <= peliculas[i].f.min)) {
+		if (currFecha.dia < peliculas[i].f.dia
+			|| (currFecha.dia == peliculas[i].f.dia && currFecha.hora < peliculas[i].f.hora)
+			|| (currFecha.dia == peliculas[i].f.dia && currFecha.hora == peliculas[i].f.hora && currFecha.min <= peliculas[i].f.min)) {
 			fecha next = getNextHour(peliculas, i);
-			currDia = next.dia;
-			currHora = next.hora;
-			currMin = next.min;
+			currFecha.dia = next.dia;
+			currFecha.hora = next.hora;
+			currFecha.min = next.min;
 
 			cont++;
 		}
@@ -126,6 +135,8 @@ bool resuelveCaso() {
 
 	// los ordenamos de mayor a menor
 	//std::sort(peliculas.begin(), peliculas.end());
+
+	std::sort(peliculas.begin(), peliculas.end(), earlierThan);
 
 	// solucion
 	cout << maraton(peliculas) << "\n";
