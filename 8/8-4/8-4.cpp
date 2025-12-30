@@ -45,7 +45,7 @@ struct pelicula {
 };
 
 
-fecha getNextHour(vector<pelicula> peliculas, int i) {
+fecha getNextHour(vector<pelicula> const& peliculas, int const& i) {
 
 	int currHora = peliculas[i].f.hora, 
 		currMin = peliculas[i].f.min, 
@@ -72,29 +72,27 @@ bool earlierThan(const pelicula& a, const pelicula& b)
 {
 	return a.f.dia < b.f.dia
 		|| (a.f.dia == b.f.dia && a.f.hora < b.f.hora)
-		|| (a.f.dia == b.f.dia && a.f.hora == b.f.hora && a.f.min < b.f.min);
+		|| (a.f.dia == b.f.dia && a.f.hora == b.f.hora && a.f.min < b.f.min)
+		|| (a.f.dia == b.f.dia && a.f.hora == b.f.hora && a.f.min == b.f.min && a.duracion < b.duracion);
+}
+
+bool earlierThanDate(const fecha& a, const fecha& b)
+{
+	return a.dia < b.dia
+		|| (a.dia == b.dia && a.hora < b.hora)
+		|| (a.dia == b.dia && a.hora == b.hora && a.min <= b.min);
 }
 
 int maraton(vector<pelicula> peliculas) {
 	int cont = 1;
-	int i = 0;
+	int i = 1;
 
-	fecha currFecha;
-	fecha next = getNextHour(peliculas, i);
-	currFecha.dia = next.dia; 
-	currFecha.hora = next.hora; 
-	currFecha.min = next.min;
-	i++;
+	fecha currFecha = getNextHour(peliculas, 0);
 
 	while (i < peliculas.size()) {
-		if (currFecha.dia < peliculas[i].f.dia
-			|| (currFecha.dia == peliculas[i].f.dia && currFecha.hora < peliculas[i].f.hora)
-			|| (currFecha.dia == peliculas[i].f.dia && currFecha.hora == peliculas[i].f.hora && currFecha.min <= peliculas[i].f.min)) {
-			fecha next = getNextHour(peliculas, i);
-			currFecha.dia = next.dia;
-			currFecha.hora = next.hora;
-			currFecha.min = next.min;
+		if (earlierThanDate(currFecha, peliculas[i].f)) {
 
+			currFecha = getNextHour(peliculas, i);
 			cont++;
 		}
 		i++;
@@ -133,13 +131,10 @@ bool resuelveCaso() {
 	}
 
 
-	// los ordenamos de mayor a menor
-	//std::sort(peliculas.begin(), peliculas.end());
-
 	std::sort(peliculas.begin(), peliculas.end(), earlierThan);
 
 	// solucion
-	cout << maraton(peliculas) << "\n";
+	cout << maraton(peliculas) << std::endl;
 
 	return true;
 }
